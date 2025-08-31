@@ -50,14 +50,3 @@ You can also access the OpenAPI documentation directly at:
 ```
 //https://127.0.0.1:8000/api/docs.jsonopenapi
 ```
-
-# Test suite
-
-You can run the test suite with:
-
-```
-make test
-```
-
-Tests rely on data fixtures, stories and factories thanks to Foundry, as well as justinrainbow/json-schema and  DAMADoctrineTestBundle to reset the database.
-

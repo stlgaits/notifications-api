@@ -21,20 +21,6 @@ install: start ## Install with full Docker
 	$(PHP) bin/console doctrine:migrations:migrate -n
 	$(PHP) bin/console doctrine:fixtures:load -n --quiet
 
-
-##
-## Tests setup
-## ---------------------------------------------------------------
-test-install: ## Basic test Install with local PHP & Symfony CLI
-	$(DOCKER_COMPOSE) up -d
-	composer install
-	symfony console doctrine:database:create --if-not-exists -n --env=test
-	symfony console doctrine:migrations:migrate -n --env=test
-	symfony console doctrine:fixtures:load -n --quiet --env=test
-
-test:
-	 php bin/phpunit
-
 ##
 ## Start/Stop
 ##-----------------------------------------------------------------

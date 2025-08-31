@@ -50,7 +50,7 @@ class Notification
     #[ORM\Column(nullable: true)]
     private \DateTimeImmutable|null $sentAt = null;
 
-    public function getId(): AbstractUid|null
+    public function getId(): ?AbstractUid
     {
         return $this->id;
     }
@@ -60,42 +60,42 @@ class Notification
         $this->id = $id;
     }
 
-    public function getSubject(): string|null
+    public function getSubject(): ?string
     {
         return $this->subject;
     }
 
-    public function setSubject(string|null $subject): void
+    public function setSubject(?string $subject): void
     {
         $this->subject = $subject;
     }
 
-    public function getBody(): string|null
+    public function getBody(): ?string
     {
         return $this->body;
     }
 
-    public function setBody(string|null $body): void
+    public function setBody(?string $body): void
     {
         $this->body = $body;
     }
 
-    public function getRecipient(): string|null
+    public function getRecipient(): ?string
     {
         return $this->recipient;
     }
 
-    public function setRecipient(string|null $recipient): void
+    public function setRecipient(?string $recipient): void
     {
         $this->recipient = $recipient;
     }
 
-    public function getSentAt(): \DateTimeImmutable|null
+    public function getSentAt(): ?\DateTimeImmutable
     {
         return $this->sentAt;
     }
 
-    public function setSentAt(\DateTimeImmutable|null $sentAt): void
+    public function setSentAt(?\DateTimeImmutable $sentAt): void
     {
         $this->sentAt = $sentAt;
     }
