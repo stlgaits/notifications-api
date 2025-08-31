@@ -32,7 +32,7 @@ class NotificationTest extends ApiTestCase
         ]);
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
-        $this->assertCount(30, $response->toArray()['member']);  // Default pagination is 30 items per page
+        $this->assertCount(10, $response->toArray()['member']);
         $this->assertResponseHeaderSame('content-type', 'application/ld+json; charset=utf-8');
         $this->assertJsonContains([
             '@context' => '/api/contexts/Notification',
@@ -43,7 +43,7 @@ class NotificationTest extends ApiTestCase
                 '@id' => '/api/notifications?page=1',
                 '@type' => 'PartialCollectionView',
                 'first' => '/api/notifications?page=1',
-                'last' => '/api/notifications?page=4',
+                'last' => '/api/notifications?page=10',
                 'next' => '/api/notifications?page=2',
             ],
         ]);
@@ -72,6 +72,30 @@ class NotificationTest extends ApiTestCase
             'subject' => 'Test email',
             'body' => 'Email body content',
             'recipient' => 'beyonce.knowles@gmail.com',
+        ]);
+    }
+
+    public function testCannotCreateInvalidNotification(): void
+    {
+        $client = self::$client;
+        $response = $client->request('POST', '/api/notifications', [
+            'headers' => [
+                'Content-Type' => 'application/ld+json',
+            ],
+            'json' => [
+                'recipient' => 'test wrong email',
+                'subject' => 'Test email',
+                'body' => 'Email body content',
+            ]
+        ]);
+        $this->assertResponseIsUnprocessable();
+        $this->assertResponseStatusCodeSame(422);
+        $this->assertJsonContains([
+            '@context' => '/api/contexts/ConstraintViolation',
+            '@type' => 'ConstraintViolation',
+            'status' => 422,
+            'description' => 'recipient: This value is not a valid email address.',
+            'detail' => 'recipient: This value is not a valid email address.',
         ]);
     }
 
