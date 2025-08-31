@@ -118,9 +118,9 @@ class Notification
         $this->sentAt = $sentAt;
     }
 
-    public function getStateValue(): string
+    public function getStateValue(): string|null
     {
-        return $this->state->value;
+        return $this->state?->value;
     }
 
     public function setStateValue(string $stateValue): void
