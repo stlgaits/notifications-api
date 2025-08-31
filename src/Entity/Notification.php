@@ -30,6 +30,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 #[Patch(
     uriTemplate: '/notifications/{id}/send',
+    description: 'Send a notification',
     input: false,
     output: Notification::class,
     name: 'send_notification',

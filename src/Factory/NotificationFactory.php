@@ -24,7 +24,7 @@ final class NotificationFactory extends PersistentProxyObjectFactory
             'body' => self::faker()->text(),
             'recipient' => self::faker()->email(),
             'subject' => self::faker()->sentence(4),
-            'sentAt' => self::faker()->dateTimeThisMonth(),
+            'sentAt' => null,
             'stateValue' => NotificationStateEnum::PENDING->value,
         ];
     }
