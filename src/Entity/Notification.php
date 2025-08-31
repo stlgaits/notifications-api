@@ -14,9 +14,12 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\AbstractUid;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    paginationItemsPerPage: 10
+)]
 #[GetCollection(
     name: 'list_notifications',
 )]
@@ -31,6 +34,7 @@ class Notification
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'NONE')]
+    #[Assert\Uuid]
     private AbstractUid|null $id = null;
 
     public function __construct()
@@ -39,12 +43,16 @@ class Notification
     }
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
     private string|null $subject = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank]
     private string|null $body = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private string|null $recipient = null;
 
     #[ORM\Column(nullable: true)]
