@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Entity;
 
 use App\Repository\NotificationRepository;
@@ -12,17 +14,17 @@ class Notification
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int|null $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $subject = null;
+    private string|null $subject = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    private ?string $body = null;
+    private string|null $body = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $recipient = null;
+    private string|null $recipient = null;
 
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $sentAt = null;
+    private \DateTimeImmutable|null $sentAt = null;
 }

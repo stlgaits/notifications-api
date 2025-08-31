@@ -69,6 +69,9 @@
         }
     },
     "require-dev": {
-        "symfony/maker-bundle": "^1.64"
+        "phpstan/phpstan": "^2.1",
+        "rector/rector": "^2.1",
+        "symfony/maker-bundle": "^1.64",
+        "symplify/easy-coding-standard": "^12.5"
     }
 }
