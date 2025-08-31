@@ -9,11 +9,11 @@ framework:
                 property: 'stateValue'
             supports:
                 - App\Entity\Notification
-            initial_marking: !php/const App\Enum\NotificationStateEnum::PENDING->value
+            initial_marking: !php/enum App\Enum\NotificationStateEnum::PENDING->value
             places:
-                - !php/const App\Enum\NotificationStateEnum::PENDING->value
-                - !php/const App\Enum\NotificationStateEnum::SENT->value
+                - !php/enum App\Enum\NotificationStateEnum::PENDING->value
+                - !php/enum App\Enum\NotificationStateEnum::SENT->value
             transitions:
                 send:
-                    from: !php/const App\Enum\NotificationStateEnum::PENDING->value
-                    to: !php/const App\Enum\NotificationStateEnum::SENT->value
+                    from: !php/enum App\Enum\NotificationStateEnum::PENDING->value
+                    to: !php/enum App\Enum\NotificationStateEnum::SENT->value

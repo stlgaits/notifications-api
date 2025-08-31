@@ -10,6 +10,7 @@ use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\NotificationStateEnum;
 use App\Repository\NotificationRepository;
+use App\State\NotificationStateProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -28,7 +29,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     name: 'create_notification',
 )]
 #[Patch(
-    name: 'send_notification',  // so far it's a full-on patch but we need to change that to a custom operation later
+    uriTemplate: '/notifications/{id}/send',
+    input: false,
+    output: Notification::class,
+    name: 'send_notification',
+    processor: NotificationStateProcessor::class
 )]
 class Notification
 {
