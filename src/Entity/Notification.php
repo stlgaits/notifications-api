@@ -8,7 +8,9 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Enum\NotificationStateEnum;
 use App\Repository\NotificationRepository;
+use App\State\NotificationStateProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -27,7 +29,11 @@ use Symfony\Component\Validator\Constraints as Assert;
     name: 'create_notification',
 )]
 #[Patch(
-    name: 'send_notification',  // so far it's a full-on patch but we need to change that to a custom operation later
+    uriTemplate: '/notifications/{id}/send',
+    input: false,
+    output: Notification::class,
+    name: 'send_notification',
+    processor: NotificationStateProcessor::class
 )]
 class Notification
 {
@@ -57,6 +63,10 @@ class Notification
 
     #[ORM\Column(nullable: true)]
     private \DateTimeImmutable|null $sentAt = null;
+
+    #[ORM\Column(enumType: NotificationStateEnum::class)]
+    #[Assert\NotBlank]
+    private NotificationStateEnum|null $state = null;
 
     public function getId(): AbstractUid|null
     {
@@ -107,4 +117,30 @@ class Notification
     {
         $this->sentAt = $sentAt;
     }
+
+    public function getStateValue(): string|null
+    {
+        return $this->state?->value;
+    }
+
+    public function setStateValue(string $stateValue): void
+    {
+        $enum = NotificationStateEnum::tryFrom($stateValue);
+        if (null === $enum) {
+            throw new \InvalidArgumentException('Invalid state value: ' . $stateValue);
+        }
+        $this->state = $enum;
+    }
+
+    //    public function getState(): NotificationStateEnum|null
+    //    {
+    //        return $this->state;
+    //    }
+    //
+    //    public function setState(NotificationStateEnum $state): static
+    //    {
+    //        $this->state = $state;
+    //
+    //        return $this;
+    //    }
 }
