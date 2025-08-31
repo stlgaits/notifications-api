@@ -131,16 +131,4 @@ class Notification
         }
         $this->state = $enum;
     }
-
-    //    public function getState(): NotificationStateEnum|null
-    //    {
-    //        return $this->state;
-    //    }
-    //
-    //    public function setState(NotificationStateEnum $state): static
-    //    {
-    //        $this->state = $state;
-    //
-    //        return $this;
-    //    }
 }

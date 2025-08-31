@@ -170,6 +170,13 @@ class NotificationTest extends ApiTestCase
             'recipient' => 'test@example.com',
             'stateValue' => NotificationStateEnum::SENT->value,
         ]);
+
+        // sentAt should automatically be set via the workflow listener
+        $today = (new \DateTimeImmutable())->format('Y-m-d');
+        $responseData = $response->toArray();
+        $this->assertArrayHasKey('sentAt', $responseData);
+        $this->assertNotNull($responseData['sentAt']);
+        $this->assertStringContainsString($today, $responseData['sentAt']);
     }
 
     public function testSendNotificationIsIdempotent(): void
