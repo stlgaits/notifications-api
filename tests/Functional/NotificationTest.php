@@ -18,10 +18,22 @@ class NotificationTest extends ApiTestCase
     use Factories;
 
     private static Client $client;
+    private static string $logFile;
 
     public static function setUpBeforeClass(): void
     {
         self::$client = static::createClient();
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        self::$logFile = self::getContainer()->getParameter('kernel.logs_dir') . '/test.log';
+
+        if (file_exists(self::$logFile)) {
+            unlink(self::$logFile);
+        }
     }
 
     public function testReadNotificationsList(): void
@@ -177,6 +189,10 @@ class NotificationTest extends ApiTestCase
         $this->assertArrayHasKey('sentAt', $responseData);
         $this->assertNotNull($responseData['sentAt']);
         $this->assertStringContainsString($today, $responseData['sentAt']);
+
+        // @TODO: Check log file contains expected entries (fake email sender)
+        $logContent = file_get_contents(self::$logFile);
+//        $this->assertStringContainsString('Sent fake email notification to someone', $logContent);
     }
 
     public function testSendNotificationIsIdempotent(): void
@@ -204,7 +220,7 @@ class NotificationTest extends ApiTestCase
         ]);
     }
 
-    public function testSendNotificationWithInvalidId(): void
+    public function testCannotSendNotificationWithInvalidId(): void
     {
         $client = self::$client;
         $invalidId = '550e8400-e29b-41d4-a716-446655440000'; // Valid UUID format but non-existent

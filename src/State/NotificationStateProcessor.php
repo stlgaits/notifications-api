@@ -6,6 +6,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\Service\SendNotificationInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Workflow\WorkflowInterface;
 
@@ -15,6 +16,7 @@ readonly class NotificationStateProcessor implements ProcessorInterface
         private WorkflowInterface $sendingNotificationStateMachine,
         #[Autowire(service: 'api_platform.doctrine.orm.state.persist_processor')]
         private ProcessorInterface $persistProcessor,
+        private SendNotificationInterface $notificationSender,
     ) {
     }
 
@@ -26,6 +28,10 @@ readonly class NotificationStateProcessor implements ProcessorInterface
 
         $this->sendingNotificationStateMachine->apply($data, 'send');
 
-        return $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+        $result = $this->persistProcessor->process($data, $operation, $uriVariables, $context);
+
+        $this->notificationSender->send($result);
+
+        return $result;
     }
 }
