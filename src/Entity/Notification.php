@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
+use App\Enum\NotificationStateEnum;
 use App\Repository\NotificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -58,6 +59,10 @@ class Notification
     #[ORM\Column(nullable: true)]
     private \DateTimeImmutable|null $sentAt = null;
 
+    #[ORM\Column(enumType: NotificationStateEnum::class)]
+    #[Assert\NotBlank]
+    private NotificationStateEnum|null $state = null;
+
     public function getId(): AbstractUid|null
     {
         return $this->id;
@@ -107,4 +112,30 @@ class Notification
     {
         $this->sentAt = $sentAt;
     }
+
+    public function getStateValue(): string
+    {
+        return $this->state->value;
+    }
+
+    public function setStateValue(string $stateValue): void
+    {
+        $enum = NotificationStateEnum::tryFrom($stateValue);
+        if (null === $enum) {
+            throw new \InvalidArgumentException('Invalid state value: ' . $stateValue);
+        }
+        $this->state = $enum;
+    }
+
+    //    public function getState(): NotificationStateEnum|null
+    //    {
+    //        return $this->state;
+    //    }
+    //
+    //    public function setState(NotificationStateEnum $state): static
+    //    {
+    //        $this->state = $state;
+    //
+    //        return $this;
+    //    }
 }

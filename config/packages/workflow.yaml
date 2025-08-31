@@ -1,2 +1,19 @@
 framework:
-    workflows: null
+    workflows:
+        sending_notification:
+            type: 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'stateValue'
+            supports:
+                - App\Entity\Notification
+            initial_marking: !php/const App\Enum\NotificationStateEnum::PENDING->value
+            places:
+                - !php/const App\Enum\NotificationStateEnum::PENDING->value
+                - !php/const App\Enum\NotificationStateEnum::SENT->value
+            transitions:
+                send:
+                    from: !php/const App\Enum\NotificationStateEnum::PENDING->value
+                    to: !php/const App\Enum\NotificationStateEnum::SENT->value

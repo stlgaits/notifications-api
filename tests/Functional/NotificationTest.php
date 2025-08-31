@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Tests\Functional;
 
 use ApiPlatform\Symfony\Bundle\Test\ApiTestCase;
@@ -11,7 +13,8 @@ use Zenstruck\Foundry\Test\ResetDatabase;
 
 class NotificationTest extends ApiTestCase
 {
-    use ResetDatabase, Factories;
+    use ResetDatabase;
+    use Factories;
 
     private static Client $client;
 
@@ -28,7 +31,7 @@ class NotificationTest extends ApiTestCase
         $response = $client->request('GET', '/api/notifications', [
             'headers' => [
                 'Content-Type' => 'application/json',
-            ]
+            ],
         ]);
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -47,7 +50,6 @@ class NotificationTest extends ApiTestCase
                 'next' => '/api/notifications?page=2',
             ],
         ]);
-
     }
 
     public function testCreateNotification(): void
@@ -61,7 +63,7 @@ class NotificationTest extends ApiTestCase
                 'recipient' => 'beyonce.knowles@gmail.com',
                 'subject' => 'Test email',
                 'body' => 'Email body content',
-            ]
+            ],
         ]);
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(201);
@@ -86,7 +88,7 @@ class NotificationTest extends ApiTestCase
                 'recipient' => 'test wrong email',
                 'subject' => 'Test email',
                 'body' => 'Email body content',
-            ]
+            ],
         ]);
         $this->assertResponseIsUnprocessable();
         $this->assertResponseStatusCodeSame(422);
@@ -104,9 +106,11 @@ class NotificationTest extends ApiTestCase
         $notification = NotificationFactory::createOne([
             'recipient' => 'beyonce.knowles@gmail.com',
             'subject' => 'Initial subject',
-            'body' => 'Hey so this is a message'
+            'body' => 'Hey so this is a message',
         ]);
-        $iri = $this->findIriBy(Notification::class, ['recipient' => 'beyonce.knowles@gmail.com']);
+        $iri = $this->findIriBy(Notification::class, [
+            'recipient' => 'beyonce.knowles@gmail.com',
+        ]);
 
         $client = self::$client;
         $response = $client->request('PATCH', '/api/notifications/' . $notification->getId()->toString(), [
@@ -116,7 +120,7 @@ class NotificationTest extends ApiTestCase
             'json' => [
                 'subject' => 'Updated subject',
                 'body' => 'Actually, I changed my mind',
-            ]
+            ],
         ]);
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -124,7 +128,7 @@ class NotificationTest extends ApiTestCase
             '@id' => $iri,
             'subject' => 'Updated subject',
             'body' => 'Actually, I changed my mind',
-            'recipient' => 'beyonce.knowles@gmail.com'
+            'recipient' => 'beyonce.knowles@gmail.com',
         ]);
     }
 
@@ -132,11 +136,12 @@ class NotificationTest extends ApiTestCase
     {
         $client = self::$client;
         $response = $client->request('DELETE', '/api/notifications', [
-            'headers' => ['Content-Type' => 'application/json'],
+            'headers' => [
+                'Content-Type' => 'application/json',
+            ],
             'json' => [],
         ]);
         // DELETE route is forbidden on this API resource
         $this->assertResponseStatusCodeSame(405);
     }
-
 }

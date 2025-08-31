@@ -38,6 +38,7 @@ return static function (ECSConfig $ecsConfig): void {
         __DIR__.'/config',
         __DIR__.'/public',
         __DIR__.'/src',
+        __DIR__.'/tests',
     ]);
 
     $ecsConfig->rules([
@@ -83,5 +84,6 @@ return static function (ECSConfig $ecsConfig): void {
         PhpdocSummaryFixer::class,
         PhpdocLineSpanFixer::class,
         NoBlankLinesAfterPhpdocFixer::class,
+        __DIR__ . '/tests/bootstrap.php',
     ]);
 };
