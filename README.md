@@ -118,6 +118,12 @@ It uses a dedicated monolog channel called `notifications` to separate these log
 
 # Test suite
 
+Setup the test environment and database with:
+
+```
+make test-install
+```
+
 You can run the test suite with:
 
 ```
@@ -130,4 +136,6 @@ Tests rely on data fixtures, stories and factories thanks to Foundry, as well as
 
 From here, the next logical steps for this API would be to actually implement the sending notification interface via email. 
 I would most likely recommend using [Symfony's Notifier component](https://symfony.com/doc/current/notifier.html) (which integrates Symfony Mailer in its Email channel) to send real emails with Symfony Messenger to have an asynchronous queueing system with retries, failures etc.
+This would then entail adding new states to the state machine such as `failed` to better track the status of notifications.
+We could also imagine that notifications could be filtered by their state using API Platform filters.
 Then, if needs be, we could imagine opening up the API to support other notification types such as SMS or push notifications.
