@@ -8,7 +8,7 @@ use App\Entity\Notification;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Workflow\Event\TransitionEvent;
 
-class NotificationWorkflowListener
+final class NotificationWorkflowListener
 {
     #[AsEventListener(event: 'workflow.sending_notification.transition.send')]
     public function onWorkflowSendingNotificationTransitionSend(TransitionEvent $event): void
