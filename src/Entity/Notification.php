@@ -6,7 +6,6 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\NotificationStateEnum;
 use App\Repository\NotificationRepository;
@@ -14,13 +13,20 @@ use App\State\NotificationStateProcessor;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\AbstractUid;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: NotificationRepository::class)]
 #[ApiResource(
-    paginationItemsPerPage: 10
+    normalizationContext: [
+        'groups' => ['notification:read'],
+    ],
+    denormalizationContext: [
+        'groups' => ['notification:write'],
+    ],
+    paginationItemsPerPage: 10,
 )]
 #[GetCollection(
     name: 'list_notifications',
@@ -28,7 +34,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Post(
     name: 'create_notification',
 )]
-#[Patch(
+#[Post(
     uriTemplate: '/notifications/{id}/send',
     description: 'Send a notification',
     input: false,
@@ -42,31 +48,37 @@ class Notification
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'NONE')]
     #[Assert\Uuid]
+    #[Groups('notification:read')]
     private AbstractUid|null $id = null;
 
     public function __construct()
     {
         $this->id = Uuid::v4();
+        $this->state = NotificationStateEnum::PENDING;
     }
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
+    #[Groups(['notification:read', 'notification:write'])]
     private string|null $subject = null;
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank]
+    #[Groups(['notification:read', 'notification:write'])]
     private string|null $body = null;
 
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank]
     #[Assert\Email]
+    #[Groups(['notification:read', 'notification:write'])]
     private string|null $recipient = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups('notification:read')]
     private \DateTimeImmutable|null $sentAt = null;
 
     #[ORM\Column(enumType: NotificationStateEnum::class)]
-    #[Assert\NotBlank]
+    #[Groups('notification:read')]
     private NotificationStateEnum|null $state = null;
 
     public function getId(): AbstractUid|null
@@ -124,6 +136,7 @@ class Notification
         return $this->state?->value;
     }
 
+    #[Groups('notification:read')]
     public function setStateValue(string $stateValue): void
     {
         $enum = NotificationStateEnum::tryFrom($stateValue);
