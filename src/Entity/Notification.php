@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
 use ApiPlatform\Metadata\Post;
 use App\Enum\NotificationStateEnum;
 use App\Repository\NotificationRepository;
@@ -34,7 +35,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[Post(
     name: 'create_notification',
 )]
-#[Post(
+#[Patch(
     uriTemplate: '/notifications/{id}/send',
     description: 'Send a notification',
     input: false,
