@@ -6,6 +6,7 @@ namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\ProcessorInterface;
+use App\Entity\Notification;
 use App\Service\SendNotificationInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Workflow\WorkflowInterface;
@@ -22,6 +23,10 @@ readonly class NotificationStateProcessor implements ProcessorInterface
 
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = []): mixed
     {
+        if (!$data instanceof Notification) {
+            return $data;
+        }
+
         if (!$this->sendingNotificationStateMachine->can($data, 'send')) {
             return $data;
         }

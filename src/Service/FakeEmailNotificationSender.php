@@ -6,10 +6,12 @@ namespace App\Service;
 
 use App\Entity\Notification;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-class FakeEmailNotificationSender implements SendNotificationInterface
+readonly class FakeEmailNotificationSender implements SendNotificationInterface
 {
     public function __construct(
+        #[Autowire(service: 'monolog.logger.notification')]
         private LoggerInterface $logger
     ) {
     }

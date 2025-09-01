@@ -29,7 +29,7 @@ class NotificationTest extends ApiTestCase
     {
         parent::setUp();
 
-        self::$logFile = self::getContainer()->getParameter('kernel.logs_dir') . '/test.log';
+        self::$logFile = self::getContainer()->getParameter('kernel.logs_dir') . '/test_notifications.log';
 
         if (file_exists(self::$logFile)) {
             unlink(self::$logFile);
@@ -76,7 +76,6 @@ class NotificationTest extends ApiTestCase
                 'recipient' => 'beyonce.knowles@gmail.com',
                 'subject' => 'Test email',
                 'body' => 'Email body content',
-                'stateValue' => NotificationStateEnum::PENDING->value,
             ],
         ]);
         $this->assertResponseIsSuccessful();
@@ -103,7 +102,6 @@ class NotificationTest extends ApiTestCase
                 'recipient' => 'test wrong email',
                 'subject' => 'Test email',
                 'body' => 'Email body content',
-                'stateValue' => NotificationStateEnum::PENDING->value,
             ],
         ]);
         $this->assertResponseIsUnprocessable();
@@ -168,7 +166,7 @@ class NotificationTest extends ApiTestCase
         ]);
 
         $client = self::$client;
-        $response = $client->request('POST', '/api/notifications/' . $notification->getId()->toString() . '/send');
+        $response = $client->request('PATCH', '/api/notifications/' . $notification->getId()->toString() . '/send');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -192,7 +190,7 @@ class NotificationTest extends ApiTestCase
 
         // @TODO: Check log file contains expected entries (fake email sender)
         $logContent = file_get_contents(self::$logFile);
-        //        $this->assertStringContainsString('Sent fake email notification to someone', $logContent);
+        $this->assertStringContainsString('Sent fake email notification to someone', $logContent);
     }
 
     public function testSendNotificationIsIdempotent(): void
@@ -206,7 +204,7 @@ class NotificationTest extends ApiTestCase
         ]);
 
         $client = self::$client;
-        $response = $client->request('POST', '/api/notifications/' . $notification->getId()->toString() . '/send');
+        $response = $client->request('PATCH', '/api/notifications/' . $notification->getId()->toString() . '/send');
 
         $this->assertResponseIsSuccessful();
         $this->assertResponseStatusCodeSame(200);
@@ -225,7 +223,7 @@ class NotificationTest extends ApiTestCase
         $client = self::$client;
         $invalidId = '550e8400-e29b-41d4-a716-446655440000'; // Valid UUID format but non-existent
 
-        $response = $client->request('POST', '/api/notifications/' . $invalidId . '/send');
+        $response = $client->request('PATCH', '/api/notifications/' . $invalidId . '/send');
 
         $this->assertResponseStatusCodeSame(404);
     }
@@ -243,7 +241,7 @@ class NotificationTest extends ApiTestCase
         $client = self::$client;
 
         // body input should be ignored
-        $response = $client->request('POST', '/api/notifications/' . $notification->getId()->toString() . '/send', [
+        $response = $client->request('PATCH', '/api/notifications/' . $notification->getId()->toString() . '/send', [
             'headers' => [
                 'Content-Type' => 'application/ld+json',
             ],
